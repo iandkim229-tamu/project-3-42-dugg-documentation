@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/KitchenScreenController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/KitchenScreenController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.finishOrder = exports.getUnfinishedOrders = void 0;
+const Duggbase_1 = __importDefault(require("../models/Duggbase"));
+/**
+ * Gets list of unfinished orders.
+ * @param {Request} req - HTTP request
+ * @param {Response} res - HTTP response with list of unfinished orders
+ */
+const getUnfinishedOrders = async (req, res) => {
+    const client = await (0, Duggbase_1.default)();
+    const orders = await client.query("SELECT * FROM order_history WHERE finished = false");
+    const tableData = [];
+    //loop through orders
+    for (const order of orders.rows) {
+        const order_id = order.get('uniqueid');
+        const date = order.get('date_of_sale');
+        const query = "SELECT * FROM item_in_order WHERE order_historyid = $1";
+        const items_in_order = await client.query(query, [order_id]);
+        //for each order, loop through the items in that order
+        for (const item of items_in_order.rows) {
+            const item_id = item.get('itemid');
+            const query2 = "SELECT * FROM items WHERE uniqueid = $1";
+            const item_list = await client.query(query2, [item_id]);
+            //for each item, figure out the meal items in that item
+            for (const meal_item of item_list.rows) {
+                const item_t = meal_item.get('item_t');
+                const sideNum = meal_item.get('side');
+                const entree1Num = meal_item.get('entree1');
+                const entree2Num = meal_item.get('entree2');
+                const entree3Num = meal_item.get('entree3');
+                let isMeal = false;
+                if (parseInt(item_t) > 0 &amp;&amp; parseInt(item_t) &lt;= 8) {
+                    //meal_item is a meal, not a standalone item
+                    isMeal = true;
+                }
+                const query3 = "SELECT * FROM menu_items WHERE uniqueid = $1";
+                const side = await client.query(query3, [sideNum]);
+                const side_name = side.rows[0].get('name');
+                const entree1 = await client.query(query3, [entree1Num]);
+                const entree1_name = entree1.rows[0].get('name');
+                const entree2 = await client.query(query3, [entree2Num]);
+                const entree2_name = entree2.rows[0].get('name');
+                const entree3 = await client.query(query3, [entree3Num]);
+                const entree3_name = entree3.rows[0].get('name');
+                const query4 = "SELECT * FROM item_type WHERE uniqueid = $1";
+                const item_type = await client.query(query4, [item_t]);
+                const item_type_name = item_type.rows[0].get('name');
+                const row = {
+                    orderid: order_id,
+                    date: date,
+                    itemid: item_id,
+                    meal: isMeal,
+                    item_type: item_type_name,
+                    side: side_name,
+                    entree1: entree1_name,
+                    entree2: entree2_name,
+                    entree3: entree3_name
+                };
+                tableData.push(row);
+            }
+        }
+    }
+    res.json(tableData);
+};
+exports.getUnfinishedOrders = getUnfinishedOrders;
+/**
+ * Delclares order as finished with order ID.
+ * @param {Request} req - HTTP request with finished order
+ * @param {Response} res - HTTP response
+ */
+const finishOrder = async (req, res) => {
+    const client = await (0, Duggbase_1.default)();
+    const order = req.body;
+    const orderNum = order[0].orderNumber;
+    let query = "UPDATE order_history SET finished = true WHERE uniqueid = $1";
+    const result = await client.query(query, [orderNum]);
+};
+exports.finishOrder = finishOrder;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Item.html">Item</a></li><li><a href="Item_t.html">Item_t</a></li><li><a href="Menu_Item.html">Menu_Item</a></li><li><a href="Order.html">Order</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Duggbase">Duggbase</a></li><li><a href="global.html#addOrderToDatabase">addOrderToDatabase</a></li><li><a href="global.html#adjustDatabase">adjustDatabase</a></li><li><a href="global.html#authCallback">authCallback</a></li><li><a href="global.html#authExit">authExit</a></li><li><a href="global.html#authInit">authInit</a></li><li><a href="global.html#authLevel">authLevel</a></li><li><a href="global.html#checkout">checkout</a></li><li><a href="global.html#fillInventoryTable">fillInventoryTable</a></li><li><a href="global.html#finishOrder">finishOrder</a></li><li><a href="global.html#getEmployeeById">getEmployeeById</a></li><li><a href="global.html#getEmployees">getEmployees</a></li><li><a href="global.html#getHourlyData">getHourlyData</a></li><li><a href="global.html#getMenuItems">getMenuItems</a></li><li><a href="global.html#getReportingData">getReportingData</a></li><li><a href="global.html#getSalesDataPoints">getSalesDataPoints</a></li><li><a href="global.html#getUnfinishedOrders">getUnfinishedOrders</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#receiveInventory">receiveInventory</a></li><li><a href="global.html#terminateEmployee">terminateEmployee</a></li><li><a href="global.html#updateEmployee">updateEmployee</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:09:56 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

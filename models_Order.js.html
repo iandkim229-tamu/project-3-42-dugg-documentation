@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/Order.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/Order.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Order = void 0;
+const Employee_1 = require("./Employee");
+/** Class representing an order */
+class Order {
+    _id;
+    _total;
+    _time;
+    _employee;
+    _items;
+    /**
+     * Creates order.
+     * @param {Item[]} items - List of order items in order
+     * @param {number} id - Unique ID of order
+     * @param {number} total - Total of order
+     * @param {Employee} employee - Employee responsible for order
+     */
+    constructor(items = [], id = 0, total = 0, employee) {
+        this._id = id;
+        this._total = total;
+        this._time = new Date();
+        this._employee = employee || new Employee_1.Employee(2, false, "test", "test", false);
+        this._items = items || [];
+    }
+    // getters
+    /**
+     * Gets unique ID of order.
+     * @returns {number} Unique ID of order
+     */
+    getId() {
+        return this._id;
+    }
+    /**
+     * Gets total of order.
+     * @returns {number} Total of order
+     */
+    getTotal() {
+        return this._total;
+    }
+    /**
+     * Gets time the order was issued.
+     * @returns {Date} Order issue time
+     */
+    getTime() {
+        return this._time;
+    }
+    /**
+     * Gets employee responsible for order.
+     * @returns {Employee} Employee responsible for order
+     */
+    getEmployee() {
+        return this._employee;
+    }
+    /**
+     * Gets order items in order.
+     * @returns {Item[]} Order items in order
+     */
+    getItems() {
+        return this._items;
+    }
+    /**
+     * Removes order item from list of order items.
+     * @param {number} index - Index of item to be removed
+     */
+    removeItem(index) {
+        this._items.splice(index, 1);
+    }
+    /**
+     * Adds order item to order.
+     * @param {Item} item - Item to be added
+     */
+    addItem(item) {
+        if (!this._items) {
+            this._items = [];
+        }
+        this._items.push(item);
+    }
+    /**
+     * Gets number of order items in order.
+     * @returns {number} Number of order items in order
+     */
+    itemCount() {
+        return this._items.length;
+    }
+    /**
+     * Gets total of order.
+     * @returns {number} Total of order
+     */
+    calculateTotalPrice() {
+        this.getItems().forEach(element => {
+            this._total += element.getItemPrice();
+        });
+        return this._total;
+    }
+    // check these
+    /**
+     * Gets order issue time as ISO string.
+     * @returns {string} Order issue time as ISO string
+     */
+    getDateAsString() {
+        return this._time.toISOString().slice(0, 19).replace('T', ' ');
+    }
+}
+exports.Order = Order;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Item.html">Item</a></li><li><a href="Item_t.html">Item_t</a></li><li><a href="Menu_Item.html">Menu_Item</a></li><li><a href="Order.html">Order</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Duggbase">Duggbase</a></li><li><a href="global.html#addOrderToDatabase">addOrderToDatabase</a></li><li><a href="global.html#adjustDatabase">adjustDatabase</a></li><li><a href="global.html#authCallback">authCallback</a></li><li><a href="global.html#authExit">authExit</a></li><li><a href="global.html#authInit">authInit</a></li><li><a href="global.html#authLevel">authLevel</a></li><li><a href="global.html#checkout">checkout</a></li><li><a href="global.html#fillInventoryTable">fillInventoryTable</a></li><li><a href="global.html#finishOrder">finishOrder</a></li><li><a href="global.html#getEmployeeById">getEmployeeById</a></li><li><a href="global.html#getEmployees">getEmployees</a></li><li><a href="global.html#getHourlyData">getHourlyData</a></li><li><a href="global.html#getMenuItems">getMenuItems</a></li><li><a href="global.html#getReportingData">getReportingData</a></li><li><a href="global.html#getSalesDataPoints">getSalesDataPoints</a></li><li><a href="global.html#getUnfinishedOrders">getUnfinishedOrders</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#receiveInventory">receiveInventory</a></li><li><a href="global.html#terminateEmployee">terminateEmployee</a></li><li><a href="global.html#updateEmployee">updateEmployee</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:09:56 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
